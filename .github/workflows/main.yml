@@ -1,0 +1,52 @@
+name: Deploy backend for static site to GCP
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.10.5
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: Initialize Terraform
+        working-directory: terraform
+        env:
+          TF_VAR_project_id: ${{ secrets.TF_VAR_project_id }}
+          TF_VAR_region: ${{ secrets.TF_VAR_region }}
+
+        run: terraform init
+
+      - name: Plan Terraform Changes
+        working-directory: terraform
+        env:
+          TF_VAR_project_id: ${{ secrets.TF_VAR_project_id }}
+          TF_VAR_region: ${{ secrets.TF_VAR_region }}
+        run: terraform plan
+
+#      - name: Apply Terraform Changes
+#        if: github.ref == 'refs/heads/main'
+#        working-directory: terraform
+#        env:
+#          TF_VAR_project_id: ${{ secrets.TF_VAR_project_id }}
+#          TF_VAR_region: ${{ secrets.TF_VAR_region }}
+#          TF_VAR_bucket_name: ${{ secrets.TF_VAR_bucket_name }}
+#          TF_VAR_bucket_location: ${{ secrets.TF_VAR_bucket_location }}
+#          TF_VAR_static_ip: ${{ secrets.TF_VAR_static_ip }}
+#          TF_VAR_ssl_domains: ${{ secrets.TF_VAR_ssl_domains }}
+#          TF_VAR_dns_records: ${{ secrets.TF_VAR_dns_records }}
+#        run: terraform apply -auto-approve
