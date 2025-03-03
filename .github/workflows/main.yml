@@ -23,13 +23,30 @@ jobs:
         with:
           credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
+      - name: Terraform Format Check
+        run: terraform fmt -check
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Run tfsec Security Scan
+        run: |
+          # Install tfsec (if not already installed)
+          curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | bash
+          # Run tfsec on the current directory
+          tfsec .
+
+      - name: Run Checkov Security Scan
+        run: |
+          pip install checkov
+          checkov -d .
+
       - name: Initialize Terraform
         env:
           TF_VAR_project_id: ${{ secrets.TF_VAR_project_id }}
           TF_VAR_region: ${{ secrets.TF_VAR_region }}
           TF_VAR_sa_display_name: ${{ secrets.TF_VAR_sa_display_name }}
           TF_VAR_tenant: ${{ secrets.TF_VAR_tenant }}
-
         run: terraform init
 
       - name: Plan Terraform Changes
@@ -42,7 +59,6 @@ jobs:
 
 #      - name: Apply Terraform Changes
 #        if: github.ref == 'refs/heads/main'
-#        working-directory: terraform
 #        env:
 #          TF_VAR_project_id: ${{ secrets.TF_VAR_project_id }}
 #          TF_VAR_region: ${{ secrets.TF_VAR_region }}
