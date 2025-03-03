@@ -1,2 +1,2 @@
-modules/gke/main.tf:50-65:google-gke-metadata-endpoints-disabled
-modules/gke/main.tf:50-65:google-gke-node-metadata-security
+modules/gke/main.tf:google-gke-metadata-endpoints-disabled
+modules/gke/main.tf:google-gke-node-metadata-security

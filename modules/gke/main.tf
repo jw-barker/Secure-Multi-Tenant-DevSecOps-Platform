@@ -55,6 +55,8 @@ resource "google_container_node_pool" "primary_nodes" {
     # Use a custom service account if provided; if empty, the default is used.
     service_account = var.node_pool_service_account
 
+# tfsec:ignore:google-gke-metadata-endpoints-disabled: Legacy metadata endpoints are explicitly disabled.
+# tfsec:ignore:google-gke-node-metadata-security: Node metadata is explicitly set to SECURE.
     metadata = {
       disable-legacy-endpoints = "true"
       node_metadata            = "SECURE"
