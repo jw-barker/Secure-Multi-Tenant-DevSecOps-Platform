@@ -7,8 +7,8 @@ resource "google_container_cluster" "primary" {
 
   # Private cluster configuration.
   private_cluster_config {
-    enable_private_nodes    = true
-    master_ipv4_cidr_block  = var.master_ipv4_cidr
+    enable_private_nodes   = true
+    master_ipv4_cidr_block = var.master_ipv4_cidr
   }
 
   # Enable IP aliasing.
@@ -47,16 +47,18 @@ resource "google_container_node_pool" "primary_nodes" {
   project  = var.project_id
 
   node_config {
-    machine_type    = var.machine_type
-    oauth_scopes    = [
+    machine_type = var.machine_type
+    oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
     # Use a custom service account if provided; if empty, the default is used.
     service_account = var.node_pool_service_account
-    # Set node metadata securely.
-    metadata        = "SECURE"
+    # Set node metadata securely by disabling legacy metadata endpoints.
+    metadata = {
+      disable-legacy-endpoints = "true"
+    }
     # Use Container-Optimized OS with containerd.
-    image_type      = "COS_CONTAINERD"
+    image_type = "COS_CONTAINERD"
   }
 
   initial_node_count = var.initial_node_count
