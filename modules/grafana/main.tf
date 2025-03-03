@@ -1,9 +1,3 @@
-provider "helm" {
-  kubernetes {
-    config_path = "~/.kube/config"
-  }
-}
-
 resource "helm_release" "grafana" {
   name             = var.service_name
   repository       = "https://grafana.github.io/helm-charts"
@@ -20,5 +14,12 @@ resource "helm_release" "grafana" {
   set {
     name  = "adminPassword"
     value = var.admin_password
+  }
+}
+
+data "kubernetes_service" "grafana" {
+  metadata {
+    name      = helm_release.grafana.name
+    namespace = var.namespace
   }
 }

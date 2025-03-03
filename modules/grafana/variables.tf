@@ -4,9 +4,9 @@ variable "project_id" {
 }
 
 variable "region" {
-  description = "The GCP region."
+  description = "The GCP region for Grafana deployment."
   type        = string
-  default     = "ausrtralia-southeast1"
+  default     = "australia-southeast1"
 }
 
 variable "service_name" {
@@ -28,7 +28,7 @@ variable "chart_version" {
 }
 
 variable "service_type" {
-  description = "The type of Kubernetes service to expose Grafana"
+  description = "The type of Kubernetes service for Grafana"
   type        = string
   default     = "LoadBalancer"
 }
