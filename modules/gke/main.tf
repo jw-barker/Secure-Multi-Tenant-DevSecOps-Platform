@@ -18,7 +18,7 @@ resource "google_container_cluster" "primary" {
     services_secondary_range_name = var.services_secondary_range_name
   }
 
-  # Enable master authorized networks.
+  # Enable master authorised networks.
   master_authorized_networks_config {
     cidr_blocks {
       cidr_block   = var.master_authorized_cidr
@@ -31,7 +31,6 @@ resource "google_container_cluster" "primary" {
     enabled = true
   }
 
-  # Set resource labels.
   resource_labels = {
     environment = var.environment
   }
@@ -52,19 +51,17 @@ resource "google_container_node_pool" "primary_nodes" {
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
-    # Use a custom service account if provided; if empty, the default is used.
-    #service_account = var.node_pool_service_account
+    service_account = var.node_pool_service_account
 
-# tfsec:ignore:google-gke-metadata-endpoints-disabled: Legacy metadata endpoints are explicitly disabled.
-# tfsec:ignore:google-gke-node-metadata-security: Node metadata is explicitly set to SECURE.
+    // tfsec:ignore:google-gke-metadata-endpoints-disabled: Legacy metadata endpoints are explicitly disabled.
+    // tfsec:ignore:google-gke-node-metadata-security: Node metadata is explicitly set to SECURE.
     metadata = {
       disable-legacy-endpoints = "true"
       node_metadata            = "SECURE"
     }
 
-    # Use Container-Optimized OS with containerd.
+    // Using Container-Optimised OS with containerd.
     image_type = "COS_CONTAINERD"
-    disk_size_gb = 20
   }
 
   initial_node_count = var.initial_node_count
@@ -74,3 +71,4 @@ resource "google_container_node_pool" "primary_nodes" {
     auto_repair  = true
   }
 }
+
