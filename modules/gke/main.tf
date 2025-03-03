@@ -49,19 +49,24 @@ resource "google_container_node_pool" "primary_nodes" {
   node_config {
     machine_type = var.machine_type
     disk_size_gb = var.disk_size_gb
-    disk_type    = var.disk_type 
+    disk_type    = var.disk_type
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
     service_account = var.node_pool_service_account
 
-    // tfsec ignore comments for metadata.
     metadata = {
       disable-legacy-endpoints = "true"
       node_metadata            = "SECURE"
     }
 
     image_type = "COS_CONTAINERD"
+    
+    kubelet_config {
+      cpu_manager_policy   = "none"
+      cpu_cfs_quota        = false
+      pod_pids_limit       = 0 
+    }
   }
 
   initial_node_count = var.initial_node_count

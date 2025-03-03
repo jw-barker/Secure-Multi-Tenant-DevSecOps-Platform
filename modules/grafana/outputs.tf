@@ -1,7 +1,7 @@
 output "grafana_url" {
   description = "The external URL of the Grafana service."
   value = coalesce(
-    lookup(element(data.kubernetes_service.grafana.status.load_balancer.ingress, 0), "ip", null),
-    lookup(element(data.kubernetes_service.grafana.status.load_balancer.ingress, 0), "hostname", null)
+    data.kubernetes_service.grafana.status[0]["load_balancer"]["ingress"][0]["ip"],
+    data.kubernetes_service.grafana.status[0]["load_balancer"]["ingress"][0]["hostname"]
   )
 }
