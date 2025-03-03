@@ -12,6 +12,12 @@ provider "google" {
   region  = var.region
 }
 
+provider "kubernetes" {
+  host                   = module.gke.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.gke.cluster_ca_certificate)
+  token                  = data.google_client_config.default.access_token
+}
+
 module "network" {
   source       = "./modules/network"
   network_name = "devsecops-vpc"
