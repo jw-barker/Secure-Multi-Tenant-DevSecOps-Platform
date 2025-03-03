@@ -56,9 +56,9 @@ resource "google_container_node_pool" "primary_nodes" {
 
     # Set node metadata securely by disabling legacy metadata endpoints.
     metadata = {
-      disable-legacy-endpoints = "true"
-      node_metadata            = "SECURE"
-    }
+    disable-legacy-endpoints = "true"
+    node_metadata            = "SECURE"
+  }
 
     # Use Container-Optimized OS with containerd.
     image_type = "COS_CONTAINERD"
