@@ -1,4 +1,4 @@
 output "grafana_url" {
-  description = "The URL of the deployed Grafana service."
-  value       = helm_release.grafana.status[0].url
+  description = "Grafana release notes, including the URL"
+  value       = helm_release.grafana.info.notes
 }
