@@ -33,6 +33,15 @@ jobs:
           dockerfile: Dockerfile
           context: .
 
+      - name: Initialize Terraform
+        env:
+          TF_VAR_project_id: ${{ secrets.TF_VAR_project_id }}
+          TF_VAR_region: ${{ secrets.TF_VAR_region }}
+          TF_VAR_sa_display_name: ${{ secrets.TF_VAR_sa_display_name }}
+          TF_VAR_tenant: ${{ secrets.TF_VAR_tenant }}
+          TF_VAR_demo_portal_image_url: "gcr.io/${{ secrets.TF_VAR_project_id }}/demo-portal:latest"
+        run: terraform init
+
       - name: Terraform Format Check
         run: terraform fmt -check
 
@@ -48,15 +57,6 @@ jobs:
         run: |
           pip install checkov
           checkov -d . --quiet || true
-
-      - name: Initialize Terraform
-        env:
-          TF_VAR_project_id: ${{ secrets.TF_VAR_project_id }}
-          TF_VAR_region: ${{ secrets.TF_VAR_region }}
-          TF_VAR_sa_display_name: ${{ secrets.TF_VAR_sa_display_name }}
-          TF_VAR_tenant: ${{ secrets.TF_VAR_tenant }}
-          TF_VAR_demo_portal_image_url: "gcr.io/${{ secrets.TF_VAR_project_id }}/demo-portal:latest"
-        run: terraform init
 
       - name: Plan Terraform Changes
         env:
