@@ -28,6 +28,7 @@ jobs:
           TF_VAR_project_id: ${{ secrets.TF_VAR_project_id }}
           TF_VAR_region: ${{ secrets.TF_VAR_region }}
           TF_VAR_sa_display_name: ${{ secrets.TF_VAR_sa_display_name }}
+          TF_VAR_tenant: ${{ secrets.TF_VAR_tenant }}
 
         run: terraform init
 
@@ -36,6 +37,7 @@ jobs:
           TF_VAR_project_id: ${{ secrets.TF_VAR_project_id }}
           TF_VAR_region: ${{ secrets.TF_VAR_region }}
           TF_VAR_sa_display_name: ${{ secrets.TF_VAR_sa_display_name }}
+          TF_VAR_tenant: ${{ secrets.TF_VAR_tenant }}
         run: terraform plan
 
 #      - name: Apply Terraform Changes
