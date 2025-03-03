@@ -82,3 +82,15 @@ variable "node_pool_service_account" {
   description = "Custom service account for the node pool. Leave empty to use the default service account."
   type        = string
 }
+
+variable "disk_size_gb" {
+  description = "The disk size (in GB) for each node in the node pool."
+  type        = number
+  default     = 20
+}
+
+variable "disk_type" {
+  description = "The disk type for each node"
+  type        = string
+  default     = "pd-standard"
+}

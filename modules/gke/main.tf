@@ -48,19 +48,19 @@ resource "google_container_node_pool" "primary_nodes" {
 
   node_config {
     machine_type = var.machine_type
+    disk_size_gb = var.disk_size_gb
+    disk_type    = var.disk_type 
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
     service_account = var.node_pool_service_account
 
-    // tfsec:ignore:google-gke-metadata-endpoints-disabled: Legacy metadata endpoints are explicitly disabled.
-    // tfsec:ignore:google-gke-node-metadata-security: Node metadata is explicitly set to SECURE.
+    // tfsec ignore comments for metadata.
     metadata = {
       disable-legacy-endpoints = "true"
       node_metadata            = "SECURE"
     }
 
-    // Using Container-Optimised OS with containerd.
     image_type = "COS_CONTAINERD"
   }
 
