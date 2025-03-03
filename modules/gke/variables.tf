@@ -6,7 +6,7 @@ variable "project_id" {
 variable "region" {
   description = "The GCP region."
   type        = string
-  default     = "us-central1"
+  default     = "australia-southeast1"
 }
 
 variable "cluster_name" {
@@ -29,13 +29,13 @@ variable "master_ipv4_cidr" {
 variable "cluster_secondary_range_name" {
   description = "The name of the secondary IP range for pods in the cluster (if applicable)."
   type        = string
-  default     = ""  # Set this if you have created a secondary range.
+  default     = ""
 }
 
 variable "services_secondary_range_name" {
   description = "The name of the secondary IP range for services in the cluster (if applicable)."
   type        = string
-  default     = ""  # Set this if you have created a secondary range.
+  default     = ""
 }
 
 variable "master_authorized_cidr" {

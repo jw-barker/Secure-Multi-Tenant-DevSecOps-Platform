@@ -20,7 +20,7 @@ resource "google_project_iam_custom_role" "custom_role" {
 
 # Bind the custom role to the newly created service account.
 resource "google_service_account_iam_member" "role_binding" {
-  service_account_id = google_service_account.sa.email
+  service_account_id = "projects/${var.project_id}/serviceAccounts/${google_service_account.sa.email}"
   role               = google_project_iam_custom_role.custom_role.name
   member             = "serviceAccount:${google_service_account.sa.email}"
 }

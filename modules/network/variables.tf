@@ -14,6 +14,7 @@ variable "subnet_cidr" {
 }
 
 variable "region" {
-  description = "The region for the subnet."
+  description = "The GCP region."
   type        = string
+  default     = "australia-southeast1"
 }
