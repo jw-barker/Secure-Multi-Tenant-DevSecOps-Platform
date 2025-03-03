@@ -1,10 +1,5 @@
 variable "project_id" {
-  description = "The GCP project ID where the custom role and service account will be created."
-  type        = string
-}
-
-variable "tenant" {
-  description = "A tenant identifier to include in the service account name."
+  description = "The GCP project ID where the custom role, service account and bucket IAM policies will be created."
   type        = string
 }
 
@@ -29,6 +24,11 @@ variable "permissions" {
 }
 
 variable "sa_display_name" {
-  description = "The display name for the new service account."
+  description = "The display name for the service account."
+  type        = string
+}
+
+variable "bucket_name" {
+  description = "The name of the Storage Bucket to apply IAM policies for (e.g., remote state bucket)."
   type        = string
 }

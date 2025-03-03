@@ -23,7 +23,6 @@ module "network" {
 module "iam" {
   source           = "./modules/iam"
   project_id       = var.project_id
-  tenant           = var.tenant
   role_id          = "customDevSecOpsRole"
   role_title       = "Custom DevSecOps Role"
   role_description = "Role for managing secure resources in the DevSecOps platform"
@@ -34,14 +33,7 @@ module "iam" {
     # Add any additional permissions as needed.
   ]
   sa_display_name = var.sa_display_name
-}
-
-output "iam_custom_role" {
-  value = module.iam.custom_role_name
-}
-
-output "service_account_email" {
-  value = module.iam.service_account_email
+  bucket_name     = var.bucket_name
 }
 
 module "gke" {
