@@ -17,7 +17,7 @@ module "network" {
   network_name = "devsecops-vpc"
   subnet_name  = "devsecops-subnet"
   subnet_cidr  = "10.0.0.0/16"
-  region       = "us-central1"
+  region       = var.region
 }
 
 module "iam" {

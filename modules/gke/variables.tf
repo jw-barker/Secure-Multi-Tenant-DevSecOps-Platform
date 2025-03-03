@@ -81,5 +81,4 @@ variable "machine_type" {
 variable "node_pool_service_account" {
   description = "Custom service account for the node pool. Leave empty to use the default service account."
   type        = string
-  default     = ""
 }

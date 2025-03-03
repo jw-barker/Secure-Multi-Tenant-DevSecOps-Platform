@@ -53,7 +53,7 @@ resource "google_container_node_pool" "primary_nodes" {
       "https://www.googleapis.com/auth/cloud-platform"
     ]
     # Use a custom service account if provided; if empty, the default is used.
-    service_account = var.node_pool_service_account
+    #service_account = var.node_pool_service_account
 
 # tfsec:ignore:google-gke-metadata-endpoints-disabled: Legacy metadata endpoints are explicitly disabled.
 # tfsec:ignore:google-gke-node-metadata-security: Node metadata is explicitly set to SECURE.
@@ -64,6 +64,7 @@ resource "google_container_node_pool" "primary_nodes" {
 
     # Use Container-Optimized OS with containerd.
     image_type = "COS_CONTAINERD"
+    disk_size_gb = 20
   }
 
   initial_node_count = var.initial_node_count
