@@ -45,14 +45,21 @@ output "service_account_email" {
 }
 
 module "gke" {
-  source             = "./modules/gke"
-  project_id         = var.project_id
-  region             = var.region
-  cluster_name       = "devsecops-cluster"
-  initial_node_count = 1
-  master_ipv4_cidr   = "172.16.0.0/28"
-  network            = module.network.network_id
-  subnetwork         = module.network.subnet_id
-  node_pool_name     = "primary-node-pool"
-  machine_type       = "e2-medium"
+  source                   = "./modules/gke"
+  project_id               = var.project_id
+  region                   = var.region
+  cluster_name             = "devsecops-cluster"
+  initial_node_count       = 1
+  master_ipv4_cidr         = "172.16.0.0/28"
+  master_authorized_cidr   = "203.0.113.0/24"
+  master_authorized_display_name = "admin-office"
+  environment              = "dev"
+  network                  = module.network.network_id
+  subnetwork               = module.network.subnet_id
+  node_pool_name           = "primary-node-pool"
+  machine_type             = "e2-medium"
+  node_pool_service_account = ""
 }
+
+
+

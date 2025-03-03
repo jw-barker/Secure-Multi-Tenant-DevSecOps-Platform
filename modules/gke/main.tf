@@ -5,35 +5,64 @@ resource "google_container_cluster" "primary" {
 
   initial_node_count = var.initial_node_count
 
-  # Enable private nodes (recommended for secure deployments)
+  # Private cluster configuration.
   private_cluster_config {
     enable_private_nodes    = true
     master_ipv4_cidr_block  = var.master_ipv4_cidr
   }
 
-  # Configure network settings using your previously created VPC, if desired
+  # Enable IP aliasing.
+  ip_allocation_policy {
+    cluster_secondary_range_name  = var.cluster_secondary_range_name
+    services_secondary_range_name = var.services_secondary_range_name
+  }
+
+  # Enable master authorized networks with a nested block.
+  master_authorized_networks_config {
+    cidr_blocks {
+      cidr_block   = var.master_authorized_cidr
+      display_name = var.master_authorized_display_name
+    }
+  }
+
+  # Enable network policy for pod-to-pod communication.
+  network_policy {
+    enabled = true
+  }
+
+  # Set resource labels for asset management.
+  resource_labels = {
+    environment = var.environment
+  }
+
+  # Optionally, specify the network and subnetwork.
   network    = var.network
   subnetwork = var.subnetwork
-
-  # Add additional security configuration as needed (e.g., network policies)
-  remove_default_node_pool = true
 }
 
-# Create a separate node pool with your desired settings.
 resource "google_container_node_pool" "primary_nodes" {
-  name       = var.node_pool_name
-  cluster    = google_container_cluster.primary.name
-  location   = var.region
-  project    = var.project_id
+  name     = var.node_pool_name
+  cluster  = google_container_cluster.primary.name
+  location = var.region
+  project  = var.project_id
 
   node_config {
-    machine_type = var.machine_type
-    oauth_scopes = [
+    machine_type    = var.machine_type
+    oauth_scopes    = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
-
-    # Optional: enable shielding and other security settings
+    # Use a custom service account if provided; if empty, the default is used.
+    service_account = var.node_pool_service_account
+    # Set node metadata securely.
+    metadata        = "SECURE"
+    # Use Container-Optimized OS with containerd.
+    image_type      = "COS_CONTAINERD"
   }
 
   initial_node_count = var.initial_node_count
+
+  management {
+    auto_upgrade = true
+    auto_repair  = true
+  }
 }
