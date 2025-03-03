@@ -1,4 +1,4 @@
-name: Deploy backend for static site to GCP
+name: Deploy GCP Resources
 
 on:
   push:
