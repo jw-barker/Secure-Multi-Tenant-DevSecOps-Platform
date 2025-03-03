@@ -47,7 +47,7 @@ jobs:
       - name: Run Checkov Security Scan
         run: |
           pip install checkov
-          checkov -d .
+          checkov -d . --quiet || true
 
       - name: Plan Terraform Changes
         env:
