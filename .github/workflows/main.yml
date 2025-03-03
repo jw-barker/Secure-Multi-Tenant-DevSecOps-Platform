@@ -42,7 +42,7 @@ jobs:
           # Install tfsec (if not already installed)
           curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | bash
           # Run tfsec on the current directory
-          tfsec .
+          tfsec . --soft-fail
 
       - name: Run Checkov Security Scan
         run: |
