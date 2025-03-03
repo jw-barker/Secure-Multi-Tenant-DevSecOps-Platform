@@ -18,3 +18,14 @@ variable "sa_display_name" {
   description = "The display name for the new service account."
   type        = string
 }
+
+variable "environment" {
+  description = "Environment label"
+  type        = string
+  default     = "dev"
+}
+
+variable "demo_portal_image_url" {
+  description = "The URL of the demo portal container image"
+  type        = string
+}

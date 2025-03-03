@@ -61,5 +61,13 @@ module "gke" {
   node_pool_service_account      = ""
 }
 
+module "demo_portal" {
+  source       = "./modules/cloudrun"
+  project_id   = var.project_id
+  region       = var.region
+  service_name = "demo-portal"
+  image_url    = var.demo_portal_image_url
+  environment  = var.environment
+}
 
 
