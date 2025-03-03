@@ -17,7 +17,7 @@ resource "google_container_cluster" "primary" {
     services_secondary_range_name = var.services_secondary_range_name
   }
 
-  # Enable master authorized networks with a nested block.
+  # Enable master authorized networks.
   master_authorized_networks_config {
     cidr_blocks {
       cidr_block   = var.master_authorized_cidr
@@ -30,12 +30,12 @@ resource "google_container_cluster" "primary" {
     enabled = true
   }
 
-  # Set resource labels for asset management.
+  # Set resource labels.
   resource_labels = {
     environment = var.environment
   }
 
-  # Optionally, specify the network and subnetwork.
+  # Use specified network and subnetwork.
   network    = var.network
   subnetwork = var.subnetwork
 }
@@ -53,10 +53,13 @@ resource "google_container_node_pool" "primary_nodes" {
     ]
     # Use a custom service account if provided; if empty, the default is used.
     service_account = var.node_pool_service_account
+
     # Set node metadata securely by disabling legacy metadata endpoints.
     metadata = {
       disable-legacy-endpoints = "true"
+      node_metadata            = "SECURE"
     }
+
     # Use Container-Optimized OS with containerd.
     image_type = "COS_CONTAINERD"
   }
