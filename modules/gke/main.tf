@@ -1,3 +1,4 @@
+# tfsec:ignore:google-gke-enforce-pod-security-policy: Pod Security Policy enforcement is managed by GKE defaults and the Pod Security Admission controller in newer versions.
 resource "google_container_cluster" "primary" {
   name     = var.cluster_name
   location = var.region
@@ -35,7 +36,7 @@ resource "google_container_cluster" "primary" {
     environment = var.environment
   }
 
-  # Use specified network and subnetwork.
+  # Specify the VPC network and subnetwork.
   network    = var.network
   subnetwork = var.subnetwork
 }
@@ -56,9 +57,9 @@ resource "google_container_node_pool" "primary_nodes" {
 
     # Set node metadata securely by disabling legacy metadata endpoints.
     metadata = {
-    disable-legacy-endpoints = "true"
-    node_metadata            = "SECURE"
-  }
+      disable-legacy-endpoints = "true"
+      node_metadata            = "SECURE"
+    }
 
     # Use Container-Optimized OS with containerd.
     image_type = "COS_CONTAINERD"
