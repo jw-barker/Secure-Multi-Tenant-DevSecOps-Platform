@@ -62,4 +62,13 @@ module "demo_portal" {
   environment  = var.environment
 }
 
-
+module "grafana" {
+  source         = "./modules/grafana"
+  project_id     = var.project_id
+  region         = var.region
+  service_name   = "grafana"
+  namespace      = "monitoring"
+  chart_version  = "6.17.4"
+  service_type   = "LoadBalancer"
+  admin_password = var.grafana_admin_password
+}
