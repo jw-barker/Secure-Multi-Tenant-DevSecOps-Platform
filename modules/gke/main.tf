@@ -1,4 +1,3 @@
-# tfsec:ignore:google-gke-enforce-pod-security-policy: Pod Security Policy enforcement is managed by GKE defaults and the Pod Security Admission controller in newer versions.
 resource "google_container_cluster" "primary" {
   name     = var.cluster_name
   location = var.region
@@ -12,13 +11,11 @@ resource "google_container_cluster" "primary" {
     master_ipv4_cidr_block = var.master_ipv4_cidr
   }
 
-  # Enable IP aliasing.
   ip_allocation_policy {
     cluster_secondary_range_name  = var.cluster_secondary_range_name
     services_secondary_range_name = var.services_secondary_range_name
   }
 
-  # Enable master authorised networks.
   master_authorized_networks_config {
     cidr_blocks {
       cidr_block   = var.master_authorized_cidr
@@ -26,7 +23,20 @@ resource "google_container_cluster" "primary" {
     }
   }
 
-  # Enable network policy for pod-to-pod communication.
+  master_auth {
+    client_certificate_config {
+      issue_client_certificate = false
+    }
+  }
+
+  binary_authorization {
+    evaluation_mode = "PROJECT_SINGLETON_POLICY_ENFORCE"
+  }
+
+  release_channel {
+    channel = "REGULAR"
+  }
+
   network_policy {
     enabled = true
   }
@@ -35,7 +45,6 @@ resource "google_container_cluster" "primary" {
     environment = var.environment
   }
 
-  # Specify the VPC network and subnetwork.
   network    = var.network
   subnetwork = var.subnetwork
 }
@@ -55,17 +64,16 @@ resource "google_container_node_pool" "primary_nodes" {
     ]
     service_account = var.node_pool_service_account
 
+    # Set metadata securely.
     metadata = {
       disable-legacy-endpoints = "true"
       node_metadata            = "SECURE"
     }
 
     image_type = "COS_CONTAINERD"
-    
+
     kubelet_config {
-      cpu_manager_policy   = "none"
-      cpu_cfs_quota        = false
-      pod_pids_limit       = 0 
+      cpu_manager_policy = "none"
     }
   }
 
@@ -76,4 +84,3 @@ resource "google_container_node_pool" "primary_nodes" {
     auto_repair  = true
   }
 }
-

@@ -41,7 +41,7 @@ variable "services_secondary_range_name" {
 variable "master_authorized_cidr" {
   description = "The CIDR block allowed to access the cluster master."
   type        = string
-  default     = "203.0.113.0/24"  # Replace with a secure, authorized range.
+  default     = "203.0.113.0/24" 
 }
 
 variable "master_authorized_display_name" {
@@ -94,3 +94,4 @@ variable "disk_type" {
   type        = string
   default     = "pd-standard"
 }
+
