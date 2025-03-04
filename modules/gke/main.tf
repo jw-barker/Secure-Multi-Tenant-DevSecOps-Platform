@@ -75,6 +75,7 @@ resource "google_container_node_pool" "primary_nodes" {
     kubelet_config {
       cpu_manager_policy = "none"
     }
+    
   }
 
   initial_node_count = var.initial_node_count
@@ -83,4 +84,5 @@ resource "google_container_node_pool" "primary_nodes" {
     auto_upgrade = true
     auto_repair  = true
   }
+  
 }

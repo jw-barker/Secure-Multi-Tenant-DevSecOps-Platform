@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 2.5"
+    }
+  }
+}
+
 resource "helm_release" "grafana" {
   name             = var.service_name
   repository       = "https://grafana.github.io/helm-charts"
@@ -14,6 +23,11 @@ resource "helm_release" "grafana" {
   set {
     name  = "adminPassword"
     value = var.admin_password
+  }
+
+    set {
+    name  = "rbac.pspEnabled"
+    value = "false"
   }
 }
 

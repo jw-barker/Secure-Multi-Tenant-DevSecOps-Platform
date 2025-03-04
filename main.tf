@@ -2,7 +2,7 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = "~> 4.0"
+      version = ">= 6.18.1"
     }
   }
 }
@@ -13,6 +13,14 @@ provider "google" {
 }
 
 data "google_client_config" "default" {}
+
+provider "helm" {
+  kubernetes {
+    host                   = "https://${module.gke.cluster_endpoint}"
+    cluster_ca_certificate = base64decode(module.gke.cluster_ca_certificate)
+    token                  = data.google_client_config.default.access_token
+  }
+}
 
 provider "kubernetes" {
   host                   = "https://${module.gke.cluster_endpoint}"
@@ -51,7 +59,7 @@ module "gke" {
   cluster_name                   = "devsecops-cluster"
   initial_node_count             = 1
   master_ipv4_cidr               = "172.16.0.0/28"
-  master_authorized_cidr         = "203.0.113.0/24"
+  master_authorized_cidr         = "0.0.0.0/0"
   master_authorized_display_name = "admin-office"
   environment                    = "dev"
   network                        = module.network.network_id
@@ -79,4 +87,8 @@ module "grafana" {
   chart_version  = "6.17.4"
   service_type   = "LoadBalancer"
   admin_password = var.grafana_admin_password
+
+  providers = {
+    helm = helm
+  }
 }
