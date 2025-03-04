@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Defend the Cloud</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.min.js"></script>
+  </head>
+  <body>
+    <h1>Defend the Cloud</h1>
+    <div id="welcome"></div>
+    <div id="threat"></div>
+    <div id="response"></div>
+
+    <script>
+      const socket = io();
+
+      socket.on("connect", () => {
+        console.log("Connected to server");
+      });
+
+      socket.on("welcome", data => {
+        document.getElementById("welcome").innerText = data.message;
+      });
+
+      socket.on("threat_event", event => {
+        const threatDiv = document.getElementById("threat");
+        threatDiv.innerHTML = `<p>${event.message}</p>`;
+        event.options.forEach(opt => {
+          const btn = document.createElement("button");
+          btn.innerText = opt;
+          btn.onclick = () => {
+            socket.emit("submit_action", { action: opt });
+          };
+          threatDiv.appendChild(btn);
+        });
+      });
+
+      socket.on("action_response", data => {
+        document.getElementById("response").innerText = data.result;
+      });
+    </script>
+  </body>
+</html>
