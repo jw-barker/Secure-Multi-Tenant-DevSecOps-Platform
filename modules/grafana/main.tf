@@ -29,6 +29,17 @@ resource "helm_release" "grafana" {
     name  = "rbac.pspEnabled"
     value = "false"
   }
+  
+  # Enable anonymous access
+  set {
+    name  = "auth.anonymous.enabled"
+    value = "true"
+  }
+  
+  set {
+    name  = "auth.anonymous.org_role"
+    value = "Viewer"
+  }
 }
 
 data "kubernetes_service" "grafana" {
