@@ -43,7 +43,7 @@ resource "helm_release" "grafana" {
   # Enable persistence
   set {
     name  = "persistence.enabled"
-    value = "true"
+    value = "false"
   }
   set {
     name  = "persistence.size"
