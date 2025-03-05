@@ -31,12 +31,12 @@ resource "helm_release" "grafana" {
   }
 
   # Override grafana.ini settings for anonymous access
-  set {
-    name  = "grafana.ini[auth.anonymous].enabled"
+ set {
+    name  = "grafana.ini.auth.anonymous.enabled"
     value = "true"
   }
-  set {
-    name  = "grafana.ini[auth.anonymous].org_role"
+ set {
+    name  = "grafana.ini.auth.anonymous.org_role"
     value = "Viewer"
   }
 
