@@ -29,7 +29,7 @@ resource "helm_release" "grafana" {
     name  = "rbac.pspEnabled"
     value = "false"
   }
-  
+
   # Enable anonymous access
   set {
     name  = "auth.anonymous.enabled"
@@ -39,6 +39,17 @@ resource "helm_release" "grafana" {
   set {
     name  = "auth.anonymous.org_role"
     value = "Viewer"
+  }
+
+    # Enable persistence
+  set {
+    name  = "persistence.enabled"
+    value = "true"
+  }
+  
+  set {
+    name  = "persistence.size"
+    value = "10Gi"
   }
 }
 
