@@ -1,41 +1,202 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Defend the Cloud</title>
+    <title>Barker Watchdog</title>
+    <!-- Bootswatch Flatly Theme for a modern look -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.2.3/dist/flatly/bootstrap.min.css">
+    <!-- Google Fonts (Roboto) -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Socket.IO -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.min.js"></script>
   </head>
   <body>
-    <h1>Defend the Cloud</h1>
-    <div id="welcome"></div>
-    <div id="threat"></div>
-    <div id="response"></div>
+    <!-- Header (modern, minimal design) -->
+    <header class="header">
+      <div class="container">
+        <img src="{{ url_for('static', filename='logo.jpeg') }}" alt="Your Logo" class="logo-img">
+      </div>
+    </header>
+    
+    <!-- Navigation & Summary Widgets -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+      <div class="container">
+        <a class="navbar-brand" href="#"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <!-- Future navigation links -->
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="#">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Alerts</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Settings</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
 
+    <div class="container summary-widgets mt-4">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card text-dark bg-light mb-3">
+            <div class="card-body">
+              <h5 class="card-title">Total Alerts</h5>
+              <p class="card-text" id="total-alerts">0</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card text-dark bg-light mb-3">
+            <div class="card-body">
+              <h5 class="card-title">Critical Alerts</h5>
+              <p class="card-text" id="critical-alerts">0</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Filter Controls for Alerts -->
+    <div id="alert-filter" class="container mb-3 text-center">
+      <button class="btn btn-outline-secondary filter-btn" data-filter="All">All</button>
+      <button class="btn btn-outline-secondary filter-btn" data-filter="Low">Low</button>
+      <button class="btn btn-outline-secondary filter-btn" data-filter="Medium">Medium</button>
+      <button class="btn btn-outline-secondary filter-btn" data-filter="High">High</button>
+      <button class="btn btn-outline-secondary filter-btn" data-filter="Critical">Critical</button>
+    </div>
+
+    <!-- Main Content: Three-Column Layout -->
+    <div class="container main-content">
+      <div class="row">
+        <!-- Left Column: Grafana Panels -->
+        <div class="col-md-3">
+          <div class="grafana-panel mb-4">
+            <iframe src="http://35.189.4.155/d-solo/3wMVhxtNk/gcp-metrics?orgId=1&from=now-5m&to=now&panelId=16&refresh=5s" width="100%" height="200" frameborder="0"></iframe>
+          </div>
+          <div class="grafana-panel mb-4">
+            <iframe src="http://35.189.4.155/d-solo/3wMVhxtNk/gcp-metrics?orgId=1&from=now-5m&to=now&panelId=4&refresh=5s" width="100%" height="200" frameborder="0"></iframe>
+          </div>
+        </div>
+        
+        <!-- Center Column: SIEM Alert Feed -->
+        <div class="col-md-6">
+          <h3 class="text-center mb-3">Incoming Alerts</h3>
+          <div id="alert-feed" class="alert-feed list-group">
+            <!-- Alert items will be prepended here -->
+          </div>
+        </div>
+        
+        <!-- Right Column: Grafana Panels -->
+        <div class="col-md-3">
+          <div class="grafana-panel mb-4">
+            <iframe src="http://35.189.4.155/d-solo/3wMVhxtNk/gcp-metrics?orgId=1&from=now-5m&to=now&panelId=10&refresh=5s" width="100%" height="200" frameborder="0"></iframe>
+          </div>
+          <div class="grafana-panel mb-4">
+            <iframe src="http://35.189.4.155/d-solo/3wMVhxtNk/gcp-metrics?orgId=1&from=now-5m&to=now&panelId=2&refresh=5s" width="100%" height="200" frameborder="0"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Modal for Alert Details -->
+    <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="alertModalLabel">Alert Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="modal-body">
+            <!-- Detailed alert info will be injected here -->
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <script>
       const socket = io();
+      let totalAlerts = 0;
+      let criticalAlerts = 0;
+      let currentFilter = "All";
+      
+      // Update summary widgets
+      function updateSummaries() {
+        document.getElementById("total-alerts").innerText = totalAlerts;
+        document.getElementById("critical-alerts").innerText = criticalAlerts;
+      }
+      
+      // Filter alert feed based on current filter
+      function filterAlerts() {
+        const items = document.querySelectorAll("#alert-feed .list-group-item");
+        items.forEach(item => {
+          const severity = item.getAttribute("data-severity");
+          if (currentFilter === "All" || severity === currentFilter) {
+            item.style.display = "";
+          } else {
+            item.style.display = "none";
+          }
+        });
+      }
+      
+      // Attach filter button event listeners
+      document.querySelectorAll(".filter-btn").forEach(btn => {
+        btn.addEventListener("click", function() {
+          currentFilter = this.getAttribute("data-filter");
+          filterAlerts();
+        });
+      });
+      
+      function showAlertDetails(alert) {
+        const modalBody = document.getElementById("modal-body");
+        modalBody.innerHTML = `
+          <p><strong>ID:</strong> ${alert.alert_id}</p>
+          <p><strong>Timestamp:</strong> ${alert.timestamp}</p>
+          <p><strong>Severity:</strong> ${alert.severity}</p>
+          <p><strong>Description:</strong> ${alert.description}</p>
+          <p><strong>Source:</strong> ${alert.source}</p>
+        `;
+        const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
+        alertModal.show();
+      }
 
       socket.on("connect", () => {
-        console.log("Connected to server");
+        console.log("Connected to server via Socket.IO");
       });
 
       socket.on("welcome", data => {
-        document.getElementById("welcome").innerText = data.message;
+        console.log("Received welcome message:", data);
       });
 
-      socket.on("threat_event", event => {
-        const threatDiv = document.getElementById("threat");
-        threatDiv.innerHTML = `<p>${event.message}</p>`;
-        event.options.forEach(opt => {
-          const btn = document.createElement("button");
-          btn.innerText = opt;
-          btn.onclick = () => {
-            socket.emit("submit_action", { action: opt });
-          };
-          threatDiv.appendChild(btn);
-        });
+      socket.on("alert_event", alert => {
+        console.log("Received alert event:", alert);
+        totalAlerts++;
+        if (alert.severity === "Critical") {
+          criticalAlerts++;
+        }
+        updateSummaries();
+        const alertFeed = document.getElementById("alert-feed");
+        const alertItem = document.createElement("div");
+        alertItem.className = "list-group-item";
+        alertItem.setAttribute("data-severity", alert.severity);
+        alertItem.innerHTML = `<strong>[${alert.severity}]</strong> ${alert.description} <small>${alert.timestamp}</small>`;
+        // When clicked, show details in modal.
+        alertItem.onclick = () => {
+          showAlertDetails(alert);
+        };
+        alertFeed.insertBefore(alertItem, alertFeed.firstChild);
+        filterAlerts();
       });
 
-      socket.on("action_response", data => {
-        document.getElementById("response").innerText = data.result;
+      socket.onAny((eventName, ...args) => {
+        console.log("Any event received:", eventName, args);
       });
     </script>
   </body>

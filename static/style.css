@@ -1,0 +1,95 @@
+/* Import Google Font: Roboto */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+/* Global Styles */
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
+}
+
+/* Header Styles */
+.header {
+  background: #ffffff;
+  padding: 10px 0;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+}
+.header img {
+  max-height: 150px;
+  max-width: 200px;
+  display: block;
+  margin: 0 auto;
+}
+.header h1 {
+  font-size: 1.8em;
+  margin: 10px 0 0;
+  color: #333;
+}
+
+/* Main Content */
+.main-content {
+  margin-top: 20px;
+}
+
+/* Grafana Panel Styles */
+.grafana-panel {
+  margin-bottom: 20px;
+}
+.grafana-panel iframe {
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  width: 100%;
+  height: 200px;
+}
+
+/* SIEM Alert Feed Styles */
+.alert-feed {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.list-group-item {
+  border: none;
+  border-bottom: 1px solid #eee;
+  padding: 10px;
+  transition: background 0.3s, transform 0.3s;
+  cursor: pointer;
+}
+.list-group-item:hover {
+  background-color: #f1f1f1;
+  transform: translateX(5px);
+}
+
+/* Summary Widgets */
+.summary-widgets .card {
+  margin-bottom: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Alert Filter Controls */
+#alert-filter {
+  margin-bottom: 15px;
+}
+
+/* Modal Customization */
+.modal-header {
+  background-color: #007bff;
+  color: #fff;
+}
+.modal-title {
+  font-weight: bold;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .grafana-panel iframe {
+    height: 150px;
+  }
+}
