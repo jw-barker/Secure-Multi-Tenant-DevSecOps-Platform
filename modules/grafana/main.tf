@@ -25,28 +25,26 @@ resource "helm_release" "grafana" {
     value = var.admin_password
   }
 
-    set {
+  set {
     name  = "rbac.pspEnabled"
     value = "false"
   }
 
-  # Enable anonymous access
+  # Override grafana.ini settings for anonymous access
   set {
-    name  = "auth.anonymous.enabled"
+    name  = "grafana.ini[auth.anonymous].enabled"
     value = "true"
   }
-  
   set {
-    name  = "auth.anonymous.org_role"
+    name  = "grafana.ini[auth.anonymous].org_role"
     value = "Viewer"
   }
 
-    # Enable persistence
+  # Enable persistence
   set {
     name  = "persistence.enabled"
     value = "true"
   }
-  
   set {
     name  = "persistence.size"
     value = "10Gi"
