@@ -15,6 +15,19 @@ resource "helm_release" "grafana" {
   create_namespace = true
   version          = var.chart_version
 
+  # Override grafana.ini settings using a values block:
+  # Enable anonymous access and embedding.
+  values = [
+    <<EOF
+grafana.ini:
+  auth.anonymous:
+    enabled: true
+    org_role: Viewer
+  security:
+    allow_embedding: true
+EOF
+  ]
+
   set {
     name  = "service.type"
     value = var.service_type
@@ -30,17 +43,7 @@ resource "helm_release" "grafana" {
     value = "false"
   }
 
-  # Override grafana.ini settings for anonymous access
-  set {
-    name  = "auth.anonymous.enabled"
-    value = "true"
-  }
-  set {
-    name  = "auth.anonymous.org_role"
-    value = "Viewer"
-  }
-
-  # Enable persistence
+  # Persistence settings (disabled for this demo)
   set {
     name  = "persistence.enabled"
     value = "false"
